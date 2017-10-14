@@ -52,6 +52,28 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.wvengen</groupId>
+                <artifactId>proguard-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>proguard</goal></goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <options>
+                        <option>-allowaccessmodification</option>
+                        <option>-dontwarn</option>
+                        <option>-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod</option>
+                        <option>-keepclassmembers class com.google.common.util.concurrent.MoreExecutors</option>
+                        <option>-keep public class dm.otus.l1_maven.Main {public static void main(java.lang.String[]);}</option>
+                    </options>
+                    <libs>
+                        <lib>${java.home}/lib/rt.jar</lib>
+                    </libs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
