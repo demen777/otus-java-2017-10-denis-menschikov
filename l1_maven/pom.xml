@@ -7,14 +7,13 @@
     <name>denis_l1_maven</name>
     <description>Homework for L01.1</description>
 
-    <groupId>denis_menschikov.otus</groupId>
     <artifactId>l1_maven</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <parent>
        <groupId>denis_menschikov.otus</groupId>
-       <artifactId>parent</artifactId>
+       <artifactId>otus_common_properties</artifactId>
        <version>1.0-SNAPSHOT</version>
     </parent>
 
