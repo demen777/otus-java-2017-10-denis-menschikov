@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>denis_menschikov.otus</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>otus_common_properties</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
