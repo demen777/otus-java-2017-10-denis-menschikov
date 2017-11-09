@@ -23,6 +23,7 @@ class GCInfoRecord {
         this.duration = msDuration;
     }
 
+    //<editor-fold desc="Getters">
     public String getGcEvent() {
         return gcEvent;
     }
@@ -34,12 +35,13 @@ class GCInfoRecord {
     public double getDuration() {
         return duration;
     }
+    //</editor-fold>
 }
 
 public class GCLogParser {
     private final String gcLogFilename;
     private static final Pattern gcLogLineRegex =
-            Pattern.compile("^\\S+ (\\d+\\.\\d{3}): \\[(.+?)[),:].*[ =](\\d+\\.\\d+) secs].*$");
+            Pattern.compile("^\\S+ (\\d+[.,]\\d{3}): \\[(.+?)[),:].*[ =](\\d+[,.]\\d+) secs].*$");
 
     public GCLogParser(String gcLogFilename) {
         this.gcLogFilename = gcLogFilename;
