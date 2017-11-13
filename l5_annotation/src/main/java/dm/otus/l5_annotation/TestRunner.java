@@ -1,7 +1,12 @@
 package dm.otus.l5_annotation;
 
+import com.google.common.reflect.ClassPath;
 import com.sun.istack.internal.NotNull;
+import dm.otus.l5_annotation.annotations.After;
+import dm.otus.l5_annotation.annotations.Before;
+import dm.otus.l5_annotation.annotations.Test;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,29 +25,26 @@ public class TestRunner {
         for(final Method method: methods){
             Annotation[] annotations = method.getDeclaredAnnotations();
             if (Arrays.stream(annotations).anyMatch(
-                    a -> "dm.otus.l5_annotation.annotations.Before".equals(a.annotationType().getCanonicalName()))) {
+                    a -> Before.class.equals(a.annotationType()))) {
                 beforeMethods.add(method);
             }
             else if (Arrays.stream(annotations).anyMatch(
-                    a -> "dm.otus.l5_annotation.annotations.After".equals(a.annotationType().getCanonicalName()))) {
+                    a -> After.class.equals(a.annotationType()))) {
                 afterMethods.add(method);
             }
             else if (Arrays.stream(annotations).anyMatch(
-                    a -> "dm.otus.l5_annotation.annotations.Test".equals(a.annotationType().getCanonicalName()))) {
+                    a -> Test.class.equals(a.annotationType()))) {
                 testMethods.add(method);
             }
         }
         for(Method test: testMethods) {
             System.out.printf("\nTest %s running\n", test.getName());
             Object testObject = class_.newInstance();
+            for (Method beforeMethod : beforeMethods) {
+                beforeMethod.invoke(testObject);
+            }
             try {
-                for (Method beforeMethod : beforeMethods) {
-                    beforeMethod.invoke(testObject);
-                }
                 test.invoke(testObject);
-                for (Method afterMethod : afterMethods) {
-                    afterMethod.invoke(testObject);
-                }
                 System.out.printf("Test %s OK\n", test.getName());
             }
             catch(InvocationTargetException e) {
@@ -51,11 +53,24 @@ public class TestRunner {
                     Throwable assertError = e.getCause();
                     System.out.println(assertError.toString());
                     Arrays.stream(assertError.getStackTrace()).forEach(System.out::println);
-                }
-                else {
+                } else {
                     throw new InvocationTargetException(e);
                 }
             }
+            for (Method afterMethod : afterMethods) {
+                afterMethod.invoke(testObject);
+            }
+        }
+    }
+
+    static public void runTestsInPackage(@NotNull String packageName)
+            throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException,
+            IllegalAccessException
+    {
+        final ClassPath classPath = ClassPath.from(Thread.currentThread().getContextClassLoader());
+        for(ClassPath.ClassInfo classInfo:classPath.getTopLevelClasses(packageName)) {
+            System.out.printf("\nRun tests in %s\n", classInfo.getName());
+            TestRunner.runTestsInClass(classInfo.getName());
         }
     }
 
