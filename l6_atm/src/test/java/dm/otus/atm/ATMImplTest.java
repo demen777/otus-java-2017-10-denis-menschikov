@@ -8,7 +8,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ATMImplTest {
-    private ATMImpl atm;
+    private ATM atm;
 
     @BeforeEach
     void setUp() {
