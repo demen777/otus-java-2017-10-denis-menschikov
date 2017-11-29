@@ -15,7 +15,7 @@ class ATMImplTest {
         atm = new ATMImpl();
     }
 
-    void loadCashInternal() {
+    private void loadCashInternal() {
         atm.loadCash(Nominal.RUB10, 20);
         atm.loadCash(Nominal.RUB50, 10);
         atm.loadCash(Nominal.RUB100, 5);
@@ -40,7 +40,7 @@ class ATMImplTest {
     @Test
     void getTotalValue() {
         loadCashInternal();
-        assertEquals(30*10+10*50+5*100+3*500+2*1000+1*5000, atm.getTotalValue());
+        assertEquals(30*10+10*50+5*100+3*500+2*1000+ 5000, atm.getTotalValue());
     }
 
     @Test
@@ -58,27 +58,29 @@ class ATMImplTest {
     @Test
     void giveCashNegativeSum() {
         loadCashInternal();
-        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> { atm.giveCash(-50);});
+        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> atm.giveCash(-50));
         assertEquals("Запрошена отрицательная сумма", error.getMessage());
     }
 
     @Test
     void giveCashNotEnoughCash() {
         loadCashInternal();
-        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> { atm.giveCash(15000);});
+        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> atm.giveCash(15000));
         assertEquals("По техническим причинам невозможно выдать указаную сумму", error.getMessage());
     }
 
+    @Test
     void giveCashNoMultiplyToMinNominal() {
         loadCashInternal();
-        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> { atm.giveCash(61);});
+        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> atm.giveCash(61));
         assertEquals("По техническим причинам невозможно выдать указаную сумму", error.getMessage());
     }
 
+    @Test
     void giveCashNoEnoughQuantitySmallNominal() {
         atm.loadCash(Nominal.RUB10, 20);
         atm.loadCash(Nominal.RUB1000, 2);
-        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> { atm.giveCash(210);});
+        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> atm.giveCash(210));
         assertEquals("По техническим причинам невозможно выдать указаную сумму", error.getMessage());
     }
 

@@ -13,6 +13,7 @@ public enum Nominal {
         return Integer.parseInt(this.name().substring(3));
     }
 
+    @SuppressWarnings("unused")
     public static Nominal fromInt(int value) {
         return Nominal.valueOf("RUB" + value);
     }

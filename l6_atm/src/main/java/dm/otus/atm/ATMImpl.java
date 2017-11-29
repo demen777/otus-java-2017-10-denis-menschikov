@@ -26,7 +26,24 @@ public class ATMImpl implements ATM {
         if (sum < 0) {
             throw new GiveCashError("Запрошена отрицательная сумма");
         }
-        if (sum > getTotalValue()) {
+        Map<Nominal,Integer> res = new HashMap<>();
+        int restSum = sum;
+        for(int i=Nominal.values().length-1;i>=0;i--) {
+            Nominal curNominal = Nominal.values()[i];
+            int divRes = restSum / curNominal.getValue();
+            if (divRes > cash.get(curNominal)) {
+                divRes = cash.get(curNominal);
+            }
+            if (divRes > 0) {
+                res.put(curNominal, divRes);
+                restSum -= divRes * curNominal.getValue();
+                cash.put(curNominal, cash.get(curNominal)-divRes);
+            }
+            if (restSum == 0) {
+                return res;
+            }
+        }
+        throw new GiveCashError("По техническим причинам невозможно выдать указаную сумму");
     }
 
     @Override
