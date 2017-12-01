@@ -15,7 +15,7 @@ class ATMImplTest {
         atm = new ATMImpl();
     }
 
-    private void loadCashInternal() {
+    private void loadCashInternal() throws ATM.CashError {
         atm.loadCash(Nominal.RUB10, 20);
         atm.loadCash(Nominal.RUB50, 10);
         atm.loadCash(Nominal.RUB100, 5);
@@ -26,7 +26,14 @@ class ATMImplTest {
     }
 
     @Test
-    void getCashInfo() {
+    void putCashNegativeQuantity() throws ATM.CashError {
+        loadCashInternal();
+        ATM.CashError error = assertThrows(ATM.CashError.class, () -> atm.loadCash(Nominal.RUB50, -50));
+        assertEquals("Загрузка отрицательного количества банкнот не возможна", error.getMessage());
+    }
+
+    @Test
+    void getCashInfo() throws ATM.CashError {
         loadCashInternal();
         Map<Nominal, Integer> cashInfo = atm.getCashInfo();
         assertEquals(30, cashInfo.get(Nominal.RUB10).intValue());
@@ -38,13 +45,13 @@ class ATMImplTest {
     }
 
     @Test
-    void getTotalValue() {
+    void getTotalValue() throws ATM.CashError {
         loadCashInternal();
         assertEquals(30*10+10*50+5*100+3*500+2*1000+ 5000, atm.getTotalValue());
     }
 
     @Test
-    void giveCash() throws ATM.GiveCashError {
+    void giveCash() throws ATM.CashError {
         loadCashInternal();
         Map<Nominal, Integer> cash = atm.giveCash(6780);
         assertEquals(3, cash.get(Nominal.RUB10).intValue());
@@ -56,31 +63,31 @@ class ATMImplTest {
     }
 
     @Test
-    void giveCashNegativeSum() {
+    void giveCashNegativeSum() throws ATM.CashError {
         loadCashInternal();
-        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> atm.giveCash(-50));
+        ATM.CashError error = assertThrows(ATM.CashError.class, () -> atm.giveCash(-50));
         assertEquals("Запрошена отрицательная сумма", error.getMessage());
     }
 
     @Test
-    void giveCashNotEnoughCash() {
+    void giveCashNotEnoughCash() throws ATM.CashError {
         loadCashInternal();
-        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> atm.giveCash(15000));
+        ATM.CashError error = assertThrows(ATM.CashError.class, () -> atm.giveCash(15000));
         assertEquals("По техническим причинам невозможно выдать указаную сумму", error.getMessage());
     }
 
     @Test
-    void giveCashNoMultiplyToMinNominal() {
+    void giveCashNoMultiplyToMinNominal() throws ATM.CashError {
         loadCashInternal();
-        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> atm.giveCash(61));
+        ATM.CashError error = assertThrows(ATM.CashError.class, () -> atm.giveCash(61));
         assertEquals("По техническим причинам невозможно выдать указаную сумму", error.getMessage());
     }
 
     @Test
-    void giveCashNoEnoughQuantitySmallNominal() {
+    void giveCashNoEnoughQuantitySmallNominal() throws ATM.CashError {
         atm.loadCash(Nominal.RUB10, 20);
         atm.loadCash(Nominal.RUB1000, 2);
-        ATM.GiveCashError error = assertThrows(ATM.GiveCashError.class, () -> atm.giveCash(210));
+        ATM.CashError error = assertThrows(ATM.CashError.class, () -> atm.giveCash(210));
         assertEquals("По техническим причинам невозможно выдать указаную сумму", error.getMessage());
     }
 

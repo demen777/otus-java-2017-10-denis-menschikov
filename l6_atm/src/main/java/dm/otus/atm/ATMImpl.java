@@ -17,14 +17,17 @@ public class ATMImpl implements ATM {
     }
 
     @Override
-    public void loadCash(Nominal nominal, int quantity) {
+    public void loadCash(Nominal nominal, int quantity) throws CashError {
+        if (quantity < 0) {
+            throw new CashError("Загрузка отрицательного количества банкнот не возможна");
+        }
         cash.put(nominal, cash.get(nominal)+quantity);
     }
 
     @Override
-    public Map<Nominal, Integer> giveCash(int sum) throws GiveCashError {
+    public Map<Nominal, Integer> giveCash(int sum) throws CashError {
         if (sum < 0) {
-            throw new GiveCashError("Запрошена отрицательная сумма");
+            throw new CashError("Запрошена отрицательная сумма");
         }
         Map<Nominal,Integer> res = new HashMap<>();
         int restSum = sum;
@@ -43,7 +46,7 @@ public class ATMImpl implements ATM {
                 return res;
             }
         }
-        throw new GiveCashError("По техническим причинам невозможно выдать указаную сумму");
+        throw new CashError("По техническим причинам невозможно выдать указаную сумму");
     }
 
     @Override
