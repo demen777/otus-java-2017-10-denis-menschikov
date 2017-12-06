@@ -1,16 +1,19 @@
 package dm.otus.atm;
 
-import java.util.Map;
+import java.util.Collection;
 
 @SuppressWarnings({"WeakerAccess"})
 public interface ATM {
-    void loadCash(Nominal nominal, int quantity) throws CashError;
-    Map<Nominal, Integer> giveCash(int sum) throws CashError;
-    Map<Nominal, Integer> getCashInfo();
-    int getTotalValue();
+    void addCell(Cell cell);
+    void removeCell(Nominal nominal);
+    Collection<Nominal> getAvailableNominals();
 
-    class CashError extends Exception {
-        public CashError(String msg) {
+    void loadCash(Cash cash) throws ATMError;
+    Cash giveCash(int sum) throws ATMError;
+    Cash getCashInfo();
+
+    class ATMError extends Exception {
+        public ATMError(String msg) {
             super(msg);
         }
     }

@@ -1,61 +1,94 @@
 package dm.otus.atm;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ATMImpl implements ATM {
-
-    private final HashMap<Nominal, Integer> cash;
+    private final TreeMap<Nominal, Cell> cells;
 
     @SuppressWarnings("WeakerAccess")
-    public ATMImpl() {
-        cash = new HashMap<>();
-        for(Nominal nominal:Nominal.values()){
-            cash.put(nominal, 0);
+    public ATMImpl(Cell[] initialCells) {
+        cells = new TreeMap<>();
+        for(Cell cell:initialCells) {
+            addCell(cell);
+        }
+    }
+
+
+    @Override
+    public void addCell(Cell cell) {
+        cells.put(cell.getNominal(), cell);
+    }
+
+    @Override
+    public void removeCell(Nominal nominal) {
+        cells.remove(nominal);
+    }
+
+    @Override
+    public Collection<Nominal> getAvailableNominals() {
+        return cells.keySet();
+    }
+
+    @Override
+    public void loadCash(Cash cash) throws ATMError {
+        for(Nominal nominal:cash.getNominals()){
+            if(!cells.containsKey(nominal)) {
+                throw new ATMError(String.format("Прием номинала %s не предусмотрен", nominal));
+            }
+        }
+        for(Nominal nominal:cash.getNominals()) {
+            cells.get(nominal).loadCash(cash.getQuantity(nominal));
         }
     }
 
     @Override
-    public void loadCash(Nominal nominal, int quantity) throws CashError {
-        if (quantity < 0) {
-            throw new CashError("Загрузка отрицательного количества банкнот не возможна");
-        }
-        cash.put(nominal, cash.get(nominal)+quantity);
-    }
-
-    @Override
-    public Map<Nominal, Integer> giveCash(int sum) throws CashError {
+    public Cash giveCash(int sum) throws ATMError {
         if (sum < 0) {
-            throw new CashError("Запрошена отрицательная сумма");
+            throw new ATMError("Запрошена отрицательная сумма");
         }
-        Map<Nominal,Integer> res = new HashMap<>();
+        Cash res = new Cash();
         int restSum = sum;
-        for(int i=Nominal.values().length-1;i>=0;i--) {
-            Nominal curNominal = Nominal.values()[i];
-            int divRes = restSum / curNominal.getValue();
-            if (divRes > cash.get(curNominal)) {
-                divRes = cash.get(curNominal);
+        for(Nominal nominal:cells.descendingKeySet()) {
+            Cell cell = cells.get(nominal);
+            int divRes = restSum / nominal.getValue();
+            if (divRes > cell.getQuantity()) {
+                divRes = cell.getQuantity();
             }
             if (divRes > 0) {
-                res.put(curNominal, divRes);
-                restSum -= divRes * curNominal.getValue();
-                cash.put(curNominal, cash.get(curNominal)-divRes);
+                try {
+                    res.setQuantity(nominal, divRes);
+                } catch (Cash.CashError cashError) {
+                    cashError.printStackTrace();
+                }
+                restSum -= divRes * nominal.getValue();
             }
             if (restSum == 0) {
-                return res;
+                break;
             }
         }
-        throw new CashError("По техническим причинам невозможно выдать указаную сумму");
+        if (restSum != 0) {
+            throw new ATMError("По техническим причинам невозможно выдать указаную сумму");
+        }
+        for(Nominal nominal:res.getNominals()) {
+            try {
+                cells.get(nominal).giveCash(res.getQuantity(nominal));
+            } catch (Cell.CellError cellError) {
+                cellError.printStackTrace();
+            }
+        }
+        return res;
     }
 
     @Override
-    public Map<Nominal, Integer> getCashInfo() {
-        return Collections.unmodifiableMap(cash);
-    }
-
-    @Override
-    public int getTotalValue() {
-        return cash.entrySet().stream().mapToInt(entry -> entry.getKey().getValue()*entry.getValue()).sum();
+    public Cash getCashInfo() {
+        Cash cash = new Cash();
+        for(Nominal nominal:cells.keySet()){
+            try {
+                cash.setQuantity(nominal, cells.get(nominal).getQuantity());
+            } catch (Cash.CashError cashError) {
+                cashError.printStackTrace();
+            }
+        }
+        return cash;
     }
 }
