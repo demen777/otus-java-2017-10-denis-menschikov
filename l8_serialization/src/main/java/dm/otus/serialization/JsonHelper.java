@@ -1,9 +1,6 @@
 package dm.otus.serialization;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONAware;
-import org.json.simple.JSONObject;
 
 import java.util.*;
 
@@ -14,23 +11,21 @@ public class JsonHelper {
         NULL,
         COLLECTION,
         ARRAY,
-        VALUE,
         OBJECT,
+        STRING,
+        BOOLEAN,
+        NUMBER,
         MAP
     }
 
     public static String toJsonString(Object object) {
-        return Objects.requireNonNull(toJson(object)).toJSONString();
-    }
-
-    public static JSONAware toJson(Object object) {
         final ValueType objectValueType = recognizeValueType(object);
         switch(objectValueType) {
             case NULL:
-            case VALUE:
-                final JSONArray resValue = new JSONArray();
-                resValue.add(object);
-                return resValue;
+            case NUMBER:
+            case BOOLEAN:
+            case STRING:
+                return String.format("[%s]", getJsonValue(object));
             case ARRAY:
                 Object[] objectArray = null;
                 if (object instanceof long[]) objectArray = ArrayUtils.toObject((long[])object);
@@ -55,43 +50,51 @@ public class JsonHelper {
         return null;
     }
 
-    private static JSONAware getJsonFromMap(Map<?,?> objectFields) {
-        final JSONObject jsonObject = new JSONObject();
+    private static String getJsonFromMap(Map<?,?> objectFields) {
+        StringJoiner joiner = new StringJoiner(",");
         for(Map.Entry<?,?> entry:objectFields.entrySet()) {
             Object value = entry.getValue();
-            jsonObject.put(entry.getKey(), getJsonValue(value));
+            joiner.add(String.format("\"%s\":%s", entry.getKey(), getJsonValue(value)));
         }
-        return jsonObject;
+        return String.format("{%s}", joiner.toString());
     }
 
-    private static Object getJsonValue(Object value) {
-        Object forMapValue = null;
+    private static String getJsonValue(Object value) {
+        String forMapValue = null;
         switch(recognizeValueType(value)) {
             case NULL:
-            case VALUE:
-                forMapValue = value;
+                forMapValue = "null";
+                break;
+            case BOOLEAN:
+            case NUMBER:
+                forMapValue = value.toString();
+                break;
+            case STRING:
+                forMapValue = String.format("\"%s\"", value);
                 break;
             case COLLECTION:
             case ARRAY:
             case OBJECT:
             case MAP:
-                forMapValue = toJson(value);
+                forMapValue = toJsonString(value);
+                break;
         }
         return forMapValue;
     }
 
-    private static JSONArray getJsonFromCollection(Collection object) {
-        final JSONArray resCollection = new JSONArray();
+    private static String getJsonFromCollection(Collection object) {
+        StringJoiner joiner = new StringJoiner(",");
         for(Object element: object) {
-            resCollection.add(getJsonValue(element));
+            joiner.add(getJsonValue(element));
         }
-        return resCollection;
+        return String.format("[%s]", joiner.toString());
     }
 
     private static ValueType recognizeValueType(Object object) {
         if (object == null) return ValueType.NULL;
-        if ((object instanceof Boolean) || (object instanceof String)
-                || (Number.class.isAssignableFrom(object.getClass()))) return ValueType.VALUE;
+        if (object instanceof Boolean) return ValueType.BOOLEAN;
+        if (object instanceof String) return ValueType.STRING;
+        if (Number.class.isAssignableFrom(object.getClass())) return ValueType.NUMBER;
         if (object instanceof Collection) return ValueType.COLLECTION;
         if (object.getClass().isArray()) return ValueType.ARRAY;
         if (object instanceof Map) return ValueType.MAP;

@@ -1,9 +1,9 @@
 package dm.otus.serialization;
 
 import com.google.gson.Gson;
-import org.json.simple.JSONAware;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.*;
 
@@ -55,7 +55,7 @@ class JsonHelperTest {
         System.out.println(jsonString);
         Gson gson = new Gson();
         TestClass testClassFromJson = gson.fromJson(jsonString, TestClass.class);
-        Assert.assertTrue(testClass.equals(testClassFromJson));
+        assertTrue(testClass.equals(testClassFromJson));
     }
 
 
@@ -73,7 +73,7 @@ class JsonHelperTest {
         System.out.println(jsonString);
         Gson gson = new Gson();
         TestClass testClassFromJson = gson.fromJson(jsonString, TestClass.class);
-        Assert.assertTrue(upperTestClass.equals(testClassFromJson));
+        assertTrue(upperTestClass.equals(testClassFromJson));
     }
 
     @Test
@@ -82,22 +82,22 @@ class JsonHelperTest {
         map1.put("firstKey", "Hello JSON from map1");
         map1.put("secondKey", 5L);
         String jsonString = JsonHelper.toJsonString(map1);
-        Assert.assertEquals("{\"firstKey\":\"Hello JSON from map1\",\"secondKey\":5}", jsonString);
+        assertEquals("{\"firstKey\":\"Hello JSON from map1\",\"secondKey\":5}", jsonString);
     }
 
     @Test
     void toJson_int() {
-        Assert.assertEquals("[1]", JsonHelper.toJsonString(1));
+        assertEquals("[1]", JsonHelper.toJsonString(1));
     }
 
     @Test
     void toJson_double() {
-        Assert.assertEquals("[5.5]", JsonHelper.toJsonString(5.5));
+        assertEquals("[5.5]", JsonHelper.toJsonString(5.5));
     }
 
     @Test
     void toJson_null() {
-        Assert.assertEquals("[null]", JsonHelper.toJsonString(null));
+        assertEquals("[null]", JsonHelper.toJsonString(null));
     }
 
     private TestClass createTestClass() {
