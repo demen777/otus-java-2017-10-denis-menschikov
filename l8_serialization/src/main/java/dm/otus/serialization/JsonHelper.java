@@ -27,15 +27,7 @@ public class JsonHelper {
             case STRING:
                 return String.format("[%s]", getJsonValue(object));
             case ARRAY:
-                Object[] objectArray = null;
-                if (object instanceof long[]) objectArray = ArrayUtils.toObject((long[])object);
-                if (object instanceof int[]) objectArray = ArrayUtils.toObject((int[])object);
-                if (object instanceof short[]) objectArray = ArrayUtils.toObject((short[])object);
-                if (object instanceof byte[]) objectArray = ArrayUtils.toObject((byte[])object);
-                if (object instanceof boolean[]) objectArray = ArrayUtils.toObject((boolean[])object);
-                if (object instanceof char[]) objectArray = ArrayUtils.toObject((char[])object);
-                if (object instanceof float[]) objectArray = ArrayUtils.toObject((float[])object);
-                if (object instanceof double[]) objectArray = ArrayUtils.toObject((double[])object);
+                Object[] objectArray = castPrimitiveArrayToObjectArray(object);
                 List list = Arrays.asList(Objects.requireNonNull(objectArray));
                 return getJsonFromCollection(list);
             case COLLECTION:
@@ -48,6 +40,19 @@ public class JsonHelper {
                 return getJsonFromMap(objectFields);
         }
         return null;
+    }
+
+    private static Object[] castPrimitiveArrayToObjectArray(Object object) {
+        Object[] objectArray = null;
+        if (object instanceof long[]) objectArray = ArrayUtils.toObject((long[])object);
+        if (object instanceof int[]) objectArray = ArrayUtils.toObject((int[])object);
+        if (object instanceof short[]) objectArray = ArrayUtils.toObject((short[])object);
+        if (object instanceof byte[]) objectArray = ArrayUtils.toObject((byte[])object);
+        if (object instanceof boolean[]) objectArray = ArrayUtils.toObject((boolean[])object);
+        if (object instanceof char[]) objectArray = ArrayUtils.toObject((char[])object);
+        if (object instanceof float[]) objectArray = ArrayUtils.toObject((float[])object);
+        if (object instanceof double[]) objectArray = ArrayUtils.toObject((double[])object);
+        return objectArray;
     }
 
     private static String getJsonFromMap(Map<?,?> objectFields) {
