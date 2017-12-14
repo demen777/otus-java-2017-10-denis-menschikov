@@ -1,25 +1,12 @@
 package dm.otus.serialization;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class JsonHelper {
 
-    enum ValueType {
-        NULL,
-        COLLECTION,
-        ARRAY,
-        OBJECT,
-        STRING,
-        BOOLEAN,
-        NUMBER,
-        MAP
-    }
-
     public static String toJsonString(Object object) {
-        final ValueType objectValueType = recognizeValueType(object);
+        final ReflectionHelper.ValueType objectValueType = ReflectionHelper.recognizeValueType(object);
         switch(objectValueType) {
             case NULL:
             case NUMBER:
@@ -27,7 +14,7 @@ public class JsonHelper {
             case STRING:
                 return String.format("[%s]", getJsonValue(object));
             case ARRAY:
-                Object[] objectArray = castPrimitiveArrayToObjectArray(object);
+                Object[] objectArray = ReflectionHelper.castPrimitiveArrayToObjectArray(object);
                 List list = Arrays.asList(Objects.requireNonNull(objectArray));
                 return getJsonFromCollection(list);
             case COLLECTION:
@@ -42,19 +29,6 @@ public class JsonHelper {
         return null;
     }
 
-    private static Object[] castPrimitiveArrayToObjectArray(Object object) {
-        Object[] objectArray = null;
-        if (object instanceof long[]) objectArray = ArrayUtils.toObject((long[])object);
-        if (object instanceof int[]) objectArray = ArrayUtils.toObject((int[])object);
-        if (object instanceof short[]) objectArray = ArrayUtils.toObject((short[])object);
-        if (object instanceof byte[]) objectArray = ArrayUtils.toObject((byte[])object);
-        if (object instanceof boolean[]) objectArray = ArrayUtils.toObject((boolean[])object);
-        if (object instanceof char[]) objectArray = ArrayUtils.toObject((char[])object);
-        if (object instanceof float[]) objectArray = ArrayUtils.toObject((float[])object);
-        if (object instanceof double[]) objectArray = ArrayUtils.toObject((double[])object);
-        return objectArray;
-    }
-
     private static String getJsonFromMap(Map<?,?> objectFields) {
         StringJoiner joiner = new StringJoiner(",");
         for(Map.Entry<?,?> entry:objectFields.entrySet()) {
@@ -66,7 +40,7 @@ public class JsonHelper {
 
     private static String getJsonValue(Object value) {
         String forMapValue = null;
-        switch(recognizeValueType(value)) {
+        switch(ReflectionHelper.recognizeValueType(value)) {
             case NULL:
                 forMapValue = "null";
                 break;
@@ -93,17 +67,6 @@ public class JsonHelper {
             joiner.add(getJsonValue(element));
         }
         return String.format("[%s]", joiner.toString());
-    }
-
-    private static ValueType recognizeValueType(Object object) {
-        if (object == null) return ValueType.NULL;
-        if (object instanceof Boolean) return ValueType.BOOLEAN;
-        if (object instanceof String) return ValueType.STRING;
-        if (Number.class.isAssignableFrom(object.getClass())) return ValueType.NUMBER;
-        if (object instanceof Collection) return ValueType.COLLECTION;
-        if (object.getClass().isArray()) return ValueType.ARRAY;
-        if (object instanceof Map) return ValueType.MAP;
-        return ValueType.OBJECT;
     }
 
 }
