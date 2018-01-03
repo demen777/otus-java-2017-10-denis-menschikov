@@ -2,7 +2,7 @@ package dm.otus.serialization;
 
 import java.util.*;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "WeakerAccess"})
 public class JsonHelper {
 
     public static String toJsonString(Object object) {
