@@ -7,10 +7,10 @@ import org.hibernate.Transaction;
 import javax.persistence.Query;
 
 @SuppressWarnings("WeakerAccess")
-public class UserDataSetDAO {
+public class UserDAO {
     private final Session session;
 
-    public UserDataSetDAO(Session session) {
+    public UserDAO(Session session) {
         this.session = session;
     }
 

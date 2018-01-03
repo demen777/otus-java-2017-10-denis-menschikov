@@ -28,15 +28,15 @@ public class DBServiceHibernate implements DBService {
 
     public UserDataSet load(long id) {
         try (Session session=sessionFactory.openSession()){
-            UserDataSetDAO userDataSetDAO = new UserDataSetDAO(session);
-            return userDataSetDAO.load(id);
+            UserDAO userDAO = new UserDAO(session);
+            return userDAO.load(id);
         }
     }
 
     public void save(UserDataSet user) {
         try (Session session=sessionFactory.openSession()){
-            UserDataSetDAO userDataSetDAO = new UserDataSetDAO(session);
-            userDataSetDAO.save(user);
+            UserDAO userDAO = new UserDAO(session);
+            userDAO.save(user);
         }
     }
 
@@ -47,8 +47,8 @@ public class DBServiceHibernate implements DBService {
     @Override
     public void clearAll() {
         try (Session session=sessionFactory.openSession()){
-            UserDataSetDAO userDataSetDAO = new UserDataSetDAO(session);
-            userDataSetDAO.clearAll();
+            UserDAO userDAO = new UserDAO(session);
+            userDAO.clearAll();
         }
     }
 }
