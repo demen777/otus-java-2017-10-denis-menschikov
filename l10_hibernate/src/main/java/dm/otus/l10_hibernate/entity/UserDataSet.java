@@ -3,8 +3,10 @@ package dm.otus.l10_hibernate.entity;
 import dm.otus.l10_hibernate.base.DataSet;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name="users")
 public class UserDataSet extends DataSet {
@@ -14,14 +16,14 @@ public class UserDataSet extends DataSet {
     @OneToOne(cascade = CascadeType.ALL)
     private AddressDataSet address;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<PhoneDataSet> phones;
 
-    public UserDataSet(String name, int age, AddressDataSet address, List<PhoneDataSet> phone) {
+    public UserDataSet(String name, int age, AddressDataSet address) {
         this.name = name;
         this.age = age;
         this.address = address;
-        this.phones = phone;
+        this.phones = new ArrayList<>();
     }
 
     public UserDataSet() {
@@ -55,7 +57,8 @@ public class UserDataSet extends DataSet {
         return phones;
     }
 
-    public void setPhones(List<PhoneDataSet> phones) {
-        this.phones = phones;
+    public void addPhone(PhoneDataSet phone) {
+        phones.add(phone);
+        phone.setUser(this);
     }
 }

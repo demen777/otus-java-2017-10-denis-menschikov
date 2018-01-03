@@ -5,6 +5,7 @@ import dm.otus.l10_hibernate.base.DataSet;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@SuppressWarnings("ALL")
 @Entity
 @Table(name="addresses")
 public class AddressDataSet extends DataSet {

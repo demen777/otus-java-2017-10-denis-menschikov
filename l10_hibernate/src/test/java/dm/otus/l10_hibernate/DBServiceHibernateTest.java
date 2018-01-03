@@ -7,17 +7,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class DBServiceHibernateTest {
 
-    DBService dbService;
+    private DBService dbService;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         dbService = new DBServiceHibernate();
     }
 
@@ -29,16 +24,17 @@ class DBServiceHibernateTest {
     @Test
     void saveAndLoad() {
         dbService.clearAll();
-        UserDataSet user1 = new UserDataSet("Anna", 36, new AddressDataSet("Amsterdam"),
-                new ArrayList<>(Arrays.asList(new PhoneDataSet("222-222-22")))
-        );
+        UserDataSet user1 = new UserDataSet("Anna", 36, new AddressDataSet("Amsterdam"));
+        PhoneDataSet phone1 = new PhoneDataSet("222-222-22");
+        user1.addPhone(phone1);
         dbService.save(user1);
         System.out.println(user1.getId());
-        UserDataSet user2 = new UserDataSet("Ben", 30, new AddressDataSet("Berlin"),
-                new ArrayList<>(Arrays.asList(new PhoneDataSet("333-222-22"),
-                        new PhoneDataSet("444-222-22")))
-        );
+        UserDataSet user2 = new UserDataSet("Ben", 30, new AddressDataSet("Berlin"));
+        user2.addPhone(new PhoneDataSet("333-222-22"));
+        user2.addPhone(new PhoneDataSet("444-222-22"));
         dbService.save(user2);
         System.out.println(user2.getId());
+        UserDataSet loadedUser = dbService.load(2);
+        System.out.println(loadedUser.getName());
     }
 }

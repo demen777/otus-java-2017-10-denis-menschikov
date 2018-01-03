@@ -7,13 +7,12 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import javax.security.auth.login.Configuration;
 import java.io.File;
 
 public class DBServiceHibernate implements DBService {
     private final SessionFactory sessionFactory;
 
-    public DBServiceHibernate() throws Exception {
+    public DBServiceHibernate() {
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 // configures settings from hibernate.cfg.xml
                 .configure(new File("src/main/resources/hibernate.cfg.xml"))
