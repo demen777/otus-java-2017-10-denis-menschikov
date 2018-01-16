@@ -34,8 +34,9 @@ public class DBExecutor implements Executor {
             }
         }
         String sql = String.format(CREATE_TABLE, getTableName(clazz), fields_joiner.toString());
-        Statement statement = connection.createStatement();
-        statement.execute(String.format(sql, getTableName(clazz)));
+        try(Statement statement = connection.createStatement()) {
+            statement.execute(String.format(sql, getTableName(clazz)));
+        }
     }
 
     private Object mapToDBType(Class<?> type) {
@@ -54,8 +55,9 @@ public class DBExecutor implements Executor {
 
     private <T extends DataSet> void createSequence(Class<T> clazz) throws SQLException {
         final String CREATE_SEQUENCE = "CREATE SEQUENCE %s_seq";
-        Statement statement = connection.createStatement();
-        statement.execute(String.format(CREATE_SEQUENCE, getTableName(clazz)));
+        try(Statement statement = connection.createStatement()) {
+            statement.execute(String.format(CREATE_SEQUENCE, getTableName(clazz)));
+        }
     }
 
     private <T extends DataSet> String getTableName(Class<T> clazz) {
@@ -83,47 +85,52 @@ public class DBExecutor implements Executor {
         }
         final String insertSql = String.format(INSERT_INTO, getTableName(user.getClass()),
                 fields_joiner.toString(), params_joiner.toString());
-        PreparedStatement insertStatement = connection.prepareStatement(insertSql);
-        insertStatement.setLong(1, user.getId());
-        int counter = 2;
-        for(String fieldName:fieldNames) {
-            Object value = ReflectionHelper.getFieldValue(user, fieldName);
-            insertStatement.setObject(counter++, value);
+        try(PreparedStatement insertStatement = connection.prepareStatement(insertSql)){
+            insertStatement.setLong(1, user.getId());
+            int counter = 2;
+            for(String fieldName:fieldNames) {
+                Object value = ReflectionHelper.getFieldValue(user, fieldName);
+                insertStatement.setObject(counter++, value);
+            }
+            insertStatement.execute();
         }
-        insertStatement.execute();
     }
 
     private <T extends DataSet> long getId(Class<T> clazz) throws SQLException {
         final String SELECT_SEQUENCE = "SELECT nextval('%s_seq')";
-        Statement statement = connection.createStatement();
         String sql = String.format(SELECT_SEQUENCE, getTableName(clazz));
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        return resultSet.getLong(1);
+        try(Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql)) {
+            resultSet.next();
+            return resultSet.getLong(1);
+        }
     }
 
     public <T extends DataSet> T load(long id, Class<T> clazz) throws SQLException {
-        final String SELECT_FROM = "SELECT %s FROM %s WHERE id=%d";
+        final String SELECT_FROM = "SELECT %s FROM %s WHERE id=?";
         StringJoiner fields_joiner = new StringJoiner(",");
         List<String> fieldNames = getFieldNames(clazz);
         for(String fieldName:fieldNames) {
             fields_joiner.add(fieldName);
         }
-        final String selectSql = String.format(SELECT_FROM, fields_joiner.toString(), getTableName(clazz), id);
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(selectSql);
-        if (resultSet.next()) {
-            try {
-                T res = clazz.getDeclaredConstructor().newInstance();
-                for(String fieldName:fieldNames) {
-                    Object value = resultSet.getObject(fieldName);
-                    ReflectionHelper.setFieldValue(res, fieldName, value);
+        final String selectSql = String.format(SELECT_FROM, fields_joiner.toString(), getTableName(clazz));
+        try(PreparedStatement statement = connection.prepareStatement(selectSql)) {
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    try {
+                        T res = clazz.getDeclaredConstructor().newInstance();
+                        for(String fieldName:fieldNames) {
+                            Object value = resultSet.getObject(fieldName);
+                            ReflectionHelper.setFieldValue(res, fieldName, value);
+                        }
+                        res.setId(id);
+                        return res;
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException
+                            | NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
                 }
-                res.setId(id);
-                return res;
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException
-                    | NoSuchMethodException e) {
-                e.printStackTrace();
             }
         }
         return null;
@@ -132,8 +139,9 @@ public class DBExecutor implements Executor {
     public <T extends DataSet> void clearAll(Class<T> clazz) throws SQLException {
         final String DELETE_ALL = "DELETE FROM %s";
         final String deleteSql = String.format(DELETE_ALL, getTableName(clazz));
-        Statement deleteStatement = connection.createStatement();
-        deleteStatement.execute(deleteSql);
+        try(Statement deleteStatement = connection.createStatement()) {
+            deleteStatement.execute(deleteSql);
+        }
     }
 
     private class NotDefinedMappingException extends RuntimeException {
