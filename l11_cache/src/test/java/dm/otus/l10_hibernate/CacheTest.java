@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CacheTest {
-    Cache<Long, String> cache;
+    private Cache<Long, String> cache;
 
     @Test
     void checkMaxSize() {
@@ -39,6 +39,22 @@ class CacheTest {
         assertEquals("111", cache.get(1L));
         Thread.sleep(2000);
         assertNull(cache.get(1L));
+    }
+
+    @Test
+    void checkHitAndMissCounter() {
+        cache = new CacheImpl<>(200, 0, 0);
+        cache.put(1L, "111");
+        cache.put(2L, "222");
+        assertEquals(0, cache.getHitsCount());
+        assertEquals(0, cache.getMissCount());
+        cache.get(1L);
+        cache.get(3L);
+        cache.get(2L);
+        cache.get(4L);
+        cache.get(5L);
+        assertEquals(2, cache.getHitsCount());
+        assertEquals(3, cache.getMissCount());
     }
 
     @AfterEach
