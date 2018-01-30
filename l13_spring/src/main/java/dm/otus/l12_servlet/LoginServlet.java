@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class LoginServlet extends HttpServlet {
-    public static final String PATH = "/l13_spring/login";
+    public static final String PATH = "login";
     private static final String TEMPLATE_FILENAME = "login.html";
     @Autowired
     private AuthService authService;

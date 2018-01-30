@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class CacheStateServlet extends AbstractHttpServlet {
-    public static final String PATH = "/l13_spring/cache_state";
+    public static final String PATH = "cache_state";
     @Autowired
     private CacheInfo cacheInfo;
     @Autowired

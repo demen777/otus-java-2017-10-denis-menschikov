@@ -30,15 +30,15 @@
 
     <servlet-mapping>
         <servlet-name>mainServlet</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern></url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>loginServlet</servlet-name>
-        <url-pattern>/login</url-pattern>
+        <url-pattern>login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>cacheStateServlet</servlet-name>
-        <url-pattern>/cache_state</url-pattern>
+        <url-pattern>cache_state</url-pattern>
     </servlet-mapping>
 
 </web-app>
