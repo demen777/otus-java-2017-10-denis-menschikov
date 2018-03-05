@@ -2,6 +2,7 @@ package denis_menschikov.otus;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MultiThreadArraySorter<T extends Comparable> implements ArraySorter<T> {
@@ -62,9 +63,7 @@ public class MultiThreadArraySorter<T extends Comparable> implements ArraySorter
         int size = (i==numberOfThread-1)
                 ? array.length - array.length/numberOfThread*i
                 : array.length/numberOfThread;
-        @SuppressWarnings("unchecked")
-        T[] part = (T[]) Array.newInstance(array[0].getClass(), size);
-        System.arraycopy(array, sourcePosition, part, 0, size);
+        T[] part = Arrays.copyOfRange(array, sourcePosition, sourcePosition+size);
         return part;
     }
 }
