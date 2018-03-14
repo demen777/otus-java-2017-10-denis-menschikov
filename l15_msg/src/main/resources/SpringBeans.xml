@@ -1,0 +1,12 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="dbServiceHibernate" class="dm.otus.l15_msg.db.DBServiceHibernate"/>
+    <bean id="dbWorkEmulator" class="dm.otus.l15_msg.frontend.DBWorkEmulator">
+        <constructor-arg ref="dbServiceHibernate"/>
+    </bean>
+    <bean id="authServiceHibernate" class="dm.otus.l15_msg.frontend.AuthServiceImpl"/>
+
+</beans>

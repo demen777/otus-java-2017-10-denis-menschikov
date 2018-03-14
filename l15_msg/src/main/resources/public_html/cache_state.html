@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cache State</title>
+    <script>
+function sendMessage() {
+    var message = "refresh cache_info";
+    ws.send(message);
+}
+
+init = function () {
+    ws = new WebSocket("ws://localhost:8090/cache_info_socket");
+    setInterval(sendMessage, 3000);
+    ws.onopen = function (event) {
+
+    }
+    ws.onmessage = function (event) {
+        var jsonInfo = JSON.parse(event.data);
+        document.getElementById("hits").value = jsonInfo.hits;
+        document.getElementById("misses").value = jsonInfo.misses;
+        console.log("onmessage: " + event.data)
+    }
+    ws.onclose = function (event) {
+
+    }
+};
+    </script>
+</head>
+<body onload='init();'>
+Hits:<input id="hits" type="text" readonly><br>
+Misses:<input id="misses" type="text" readonly>
+</body>
+</html>
