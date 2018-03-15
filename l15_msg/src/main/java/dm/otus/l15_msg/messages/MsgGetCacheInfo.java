@@ -1,11 +1,10 @@
 package dm.otus.l15_msg.messages;
 
-import dm.otus.l15_msg.cache.CacheInfo;
-import dm.otus.l15_msg.message_system.Message;
+import dm.otus.l15_msg.db.CacheInfo;
+import dm.otus.l15_msg.message_system.AsyncMessage;
 import dm.otus.l15_msg.message_system.ServiceType;
 
-public class MsgGetCacheInfo extends Message{
-
+public class MsgGetCacheInfo extends AsyncMessage {
     private final ServiceType serviceType = new ServiceType(CacheInfo.class);
 
     @Override
@@ -16,7 +15,8 @@ public class MsgGetCacheInfo extends Message{
     @Override
     public void exec(Object receiver) {
         CacheInfo cacheInfo = (CacheInfo) receiver;
-        MsgGetCacheInfoAnswer msg = new MsgGetCacheInfoAnswer(cacheInfo.getHitCount(), cacheInfo.getMissCount());
-        getMessageSystem().sendMessageTo(receiver, msg, getTo());
+        MsgGetCacheInfoAnswer msg = new MsgGetCacheInfoAnswer(getId(),
+                cacheInfo.getHitCount(), cacheInfo.getMissCount());
+        sendReply(receiver, msg);
     }
 }

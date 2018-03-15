@@ -2,9 +2,9 @@ package dm.otus.l15_msg.message_system;
 
 
 public interface MessageSystem {
-    void addService(ServiceType serviceType, Object receiver);
-    void sendMessage(Object sender, Message message);
-    void sendMessageTo(Object sender, Message message, Address to);
-    void start();
+    void addReceiver(ServiceType serviceType, Object receiver);
+    long sendMessage(Object sender, AsyncMessage message);
+    long sendMessageTo(Object sender, AsyncMessage message, Address to);
+    Object sendMessageSync(Object sender, SyncMessage message);
     void dispose();
 }

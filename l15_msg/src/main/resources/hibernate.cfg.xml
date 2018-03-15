@@ -22,6 +22,7 @@
         <mapping class="dm.otus.l15_msg.entity.UserDataSet"/>
         <mapping class="dm.otus.l15_msg.entity.PhoneDataSet"/>
         <mapping class="dm.otus.l15_msg.entity.AddressDataSet"/>
+        <mapping class="dm.otus.l15_msg.entity.LoginDataSet"/>
 
     </session-factory>
 </hibernate-configuration>

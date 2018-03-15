@@ -3,10 +3,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="dbServiceHibernate" class="dm.otus.l15_msg.db.DBServiceHibernate"/>
+    <bean id="messageSystem" class="dm.otus.l15_msg.message_system.MessageSystemImpl"/>
+    <bean id="dbServiceHibernate" class="dm.otus.l15_msg.db.DBServiceHibernate">
+        <constructor-arg ref="messageSystem"/>
+    </bean>
     <bean id="dbWorkEmulator" class="dm.otus.l15_msg.frontend.DBWorkEmulator">
         <constructor-arg ref="dbServiceHibernate"/>
     </bean>
-    <bean id="authServiceHibernate" class="dm.otus.l15_msg.frontend.AuthServiceImpl"/>
+    <bean id="authServiceHibernate" class="dm.otus.l15_msg.frontend.AuthServiceImpl">
+        <constructor-arg ref="messageSystem"/>
+    </bean>
+    <bean id="frontendService" class="dm.otus.l15_msg.frontend.FrontendServiceImpl">
+        <constructor-arg ref="dbWorkEmulator"/>
+        <constructor-arg ref="messageSystem"/>
+    </bean>
 
 </beans>

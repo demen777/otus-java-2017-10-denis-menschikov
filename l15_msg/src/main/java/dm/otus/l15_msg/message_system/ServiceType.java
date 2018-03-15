@@ -27,7 +27,6 @@ public class ServiceType {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(name);
     }
 }

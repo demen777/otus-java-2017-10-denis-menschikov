@@ -1,6 +1,5 @@
 package dm.otus.l15_msg.frontend;
 
-import dm.otus.l15_msg.cache.CacheInfo;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +11,7 @@ import javax.servlet.ServletException;
 
 public class CacheStateWebServlet extends WebSocketServlet {
     @Autowired
-    private CacheInfo cacheInfo;
-    @Autowired
-    private DBWorkEmulator dbWorkEmulator;
+    private FrontendService frontendService;
     private final static int LOGOUT_TIME = 2 * 60 * 1000;
 
     @Override
@@ -26,6 +23,6 @@ public class CacheStateWebServlet extends WebSocketServlet {
     @Override
     public void configure(WebSocketServletFactory factory) {
         factory.getPolicy().setIdleTimeout(LOGOUT_TIME);
-        factory.setCreator(new CacheStateWebSocketCreator(cacheInfo, dbWorkEmulator));
+        factory.setCreator(new CacheStateWebSocketCreator(frontendService));
     }
 }

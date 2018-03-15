@@ -1,4 +1,4 @@
-package dm.otus.l15_msg.cache;
+package dm.otus.l15_msg.db;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;

@@ -3,8 +3,6 @@ package dm.otus.l15_msg.frontend;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -33,7 +31,7 @@ public class TemplateHelper {
     }
 
     public static String loadStatic(String staticFilename) throws IOException {
-        String res = "";
+        String res;
         ClassLoader classLoader = TemplateHelper.class.getClassLoader();
         res = IOUtils.toString(classLoader.getResourceAsStream("/public_html/"+staticFilename));
         return res;

@@ -1,13 +1,15 @@
 package dm.otus.l15_msg.message_system;
 
 public abstract class Message {
-    private Address from;
     private Address to;
     private MessageSystem messageSystem;
+    private long id;
+
+    public long getId() { return id; }
+
+    public void setId(long id) { this.id = id; }
 
     public abstract ServiceType getServiceType();
-
-    public abstract void exec(Object receiver);
 
     public MessageSystem getMessageSystem() {
         return messageSystem;
@@ -15,14 +17,6 @@ public abstract class Message {
 
     public void setMessageSystem(MessageSystem messageSystem) {
         this.messageSystem = messageSystem;
-    }
-
-    public Address getFrom() {
-        return from;
-    }
-
-    public void setFrom(Address from) {
-        this.from = from;
     }
 
     public Address getTo() {

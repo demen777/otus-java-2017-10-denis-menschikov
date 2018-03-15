@@ -8,4 +8,5 @@ public interface DBService {
     void save(UserDataSet user);
     void shutdown();
     void clearAll();
+    Boolean checkLogin(String login, String password);
 }

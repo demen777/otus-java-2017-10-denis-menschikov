@@ -1,4 +1,4 @@
-package dm.otus.l15_msg.cache;
+package dm.otus.l15_msg.db;
 
 @SuppressWarnings("WeakerAccess")
 public interface Cache<K,V> extends CacheInfo {

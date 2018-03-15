@@ -1,9 +1,8 @@
 package dm.otus.l15_msg.db;
 
 import dm.otus.l15_msg.entity.UserDataSet;
-import dm.otus.l15_msg.cache.Cache;
-import dm.otus.l15_msg.cache.CacheImpl;
-import dm.otus.l15_msg.cache.CacheInfo;
+import dm.otus.l15_msg.message_system.MessageSystem;
+import dm.otus.l15_msg.message_system.ServiceType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -11,10 +10,13 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 public class DBServiceHibernate implements DBService, CacheInfo {
+    @SuppressWarnings("FieldCanBeLocal")
+    private final MessageSystem messageSystem;
     private final SessionFactory sessionFactory;
     private Cache<Long, UserDataSet> cache;
 
-    public DBServiceHibernate() {
+    public DBServiceHibernate(MessageSystem messageSystem) {
+        this.messageSystem = messageSystem;
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 // configures settings from hibernate.cfg.xml
                 .configure("hibernate.cfg.xml")
@@ -27,6 +29,8 @@ public class DBServiceHibernate implements DBService, CacheInfo {
             throw e;
         }
         createCache();
+        messageSystem.addReceiver(new ServiceType(CacheInfo.class), this);
+        messageSystem.addReceiver(new ServiceType(DBService.class), this);
     }
 
     private void createCache() {
@@ -63,6 +67,14 @@ public class DBServiceHibernate implements DBService, CacheInfo {
             userDAO.clearAll();
             cache.dispose();
             createCache();
+        }
+    }
+
+    @Override
+    public Boolean checkLogin(String login, String password) {
+        try (Session session=sessionFactory.openSession()){
+            LoginDAO loginDAO = new LoginDAO(session);
+            return loginDAO.checkLogin(login, password);
         }
     }
 
