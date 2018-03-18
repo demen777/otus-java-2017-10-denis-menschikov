@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app>
+
+    <display-name>L13_spring</display-name>
+    <description>Lesson 13 - Spring</description>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:SpringBeans.xml</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>mainServlet</servlet-name>
+        <servlet-class>dm.otus.l15_msg.frontend.MainServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>cacheStateServlet</servlet-name>
+        <servlet-class>dm.otus.l15_msg.frontend.CacheStateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>loginServlet</servlet-name>
+        <servlet-class>dm.otus.l15_msg.frontend.LoginServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CacheStateWebServlet</servlet-name>
+        <servlet-class>dm.otus.l15_msg.frontend.CacheStateWebServlet</servlet-class>
+    </servlet>
+
+
+    <servlet-mapping>
+        <servlet-name>mainServlet</servlet-name>
+        <url-pattern></url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>loginServlet</servlet-name>
+        <url-pattern>login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>cacheStateServlet</servlet-name>
+        <url-pattern>cache_state</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CacheStateWebServlet</servlet-name>
+        <url-pattern>cache_info_socket</url-pattern>
+    </servlet-mapping>
+
+</web-app>

@@ -1,0 +1,21 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="messageSystemConnector1" class="dm.otus.l15_msg.message_system.SocketMessageSystemConnector">
+        <constructor-arg type="String" value="127.0.0.1"/>
+        <constructor-arg type="int" value="8888"/>
+    </bean>
+    <bean id="messageSystemConnector2" class="dm.otus.l15_msg.message_system.SocketMessageSystemConnector">
+        <constructor-arg type="String" value="127.0.0.1"/>
+        <constructor-arg type="int" value="8888"/>
+    </bean>
+    <bean id="authServiceHibernate" class="dm.otus.l15_msg.frontend.AuthServiceImpl">
+        <constructor-arg ref="messageSystemConnector1"/>
+    </bean>
+    <bean id="frontendService" class="dm.otus.l15_msg.frontend.FrontendServiceImpl">
+        <constructor-arg ref="messageSystemConnector2"/>
+    </bean>
+
+</beans>
